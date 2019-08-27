@@ -1,9 +1,26 @@
 version: '3'
 services:
+  db:
+    image: postgres:10-alpine
+    environment:
+      - POSTGRES_DB=app
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=supersecretpassword
+
   api:
     build: .
-    command: pipenv run python manage.py runserver 0.0.0.0:8000
+    command: >
+      sh -c "pipenv run python manage.py wait_for_db &&
+             pipenv run python manage.py migrate &&
+             pipenv run python manage.py runserver 0.0.0.0:8000"
     volumes:
       - .:/app
     ports:
       - "8000:8000"
+    environment:
+      - DB_HOST=db
+      - DB_NAME=app
+      - DB_USER=postgres
+      - DB_PASS=supersecretpassword
+    depends_on:
+      - db
