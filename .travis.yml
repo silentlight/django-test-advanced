@@ -8,5 +8,5 @@ services:
 before_script: pip install docker-compose
 
 script:
-  - docker-compose run app sh -c "pipenv run python manage.py test && pipenv run black . && pipenv run flake8"
+  - docker-compose run api sh -c "pipenv run python manage.py test && pipenv run black . && pipenv run flake8"
 
